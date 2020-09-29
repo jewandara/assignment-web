@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+  <title>Tute Template</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Raleway">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link rel="stylesheet" href="style.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script>
+    function getFontColor(bcolor) {
+      bcolor = bcolor.toUpperCase();
+      console.log('Background Color: '+bcolor);
+      var fcolor = '';
+      var bcolorChar = bcolor.split("");
+      for (i = 0; i < bcolorChar.length; i++) {
+        switch(bcolorChar[i]) {
+            case '0': fcolor += 'F'; break;
+            case '1': fcolor += 'E'; break;
+            case '2': fcolor += 'D'; break;
+            case '3': fcolor += 'C'; break;
+            case '4': fcolor += 'B'; break;
+            case '5': fcolor += 'A'; break;
+            case '6': fcolor += '9'; break;
+            case '7': fcolor += '8'; break;
+            case '8': fcolor += '7'; break;
+            case '9': fcolor += '6'; break;
+            case 'A': fcolor += '5'; break;
+            case 'B': fcolor += '4'; break;
+            case 'C': fcolor += '3'; break;
+            case 'D': fcolor += '2'; break;
+            case 'E': fcolor += '1'; break;
+            case 'F': fcolor += '0'; break;
+            case 'F': fcolor += '0'; break;
+            default:fcolor += '#'; break;
+        }
+      }
+      console.log('Fonts Color: '+fcolor);
+      return fcolor;
+    }
+
+    function changeColor(quote, backColor="#6d4298", fontColor="#FFFFFF") {
+      $("#box").prepend("<div class='box-view' style='background-color:"+backColor+";color:"+fontColor+";'><p>"+quote+"</p></div>");
+      $("#quote").val("");
+      document.title = quote;
+    }
+
+    function submitFunCallAPI() {
+      var quote = $("#quote").val();
+      if (quote === "") { console.log("This is empty quote value."); }
+      else{
+          console.log("Quote: "+quote);
+          $.ajax({
+            type: "get",
+            url: "http://api.creativehandles.com/getRandomColor",
+            success: function (data, text) {
+              if(data === null){ changeColor(quote); console.log("This API return null color value."); }
+              else if(data["color"] === "") { changeColor(quote); console.log("This API return empty color value."); }
+              else{
+                var backColor = data["color"];
+                var fontColor = getFontColor(backColor);
+                console.log("Quote: "+quote);
+                changeColor(quote, backColor, fontColor);
+              }
+            },
+            error: function (request, status, error) { 
+              changeColor(quote);
+              console.log("Exception in the API call:"+request.responseText); }
+          });
+      }
+    }
+
+    $(document).ready(function(){
+      $("form").attr('autocomplete', 'off');
+      $("form").submit(function(event) {
+        submitFunCallAPI();
+        event.preventDefault();
+      });
+    });
+
+    $(document).keypress(function(event){
+      var keycode = (event.keyCode ? event.keyCode : event.which);
+      if(keycode == '13'){
+        submitFunCallAPI();
+        event.preventDefault();
+      }
+    });
+  </script>
+  <body>
+    <div class="content">
+        <div class="wrapper">
+            <div class="container">
+                <h1>Quote colorizer</h1>
+                <form class="form" id="form">
+                    <input type="text" id="quote" placeholder="Your awesome quote">
+                    <button type="submit" id="submit">Colorize</button>
+                    <div id="box"></div>
+                </form>
+            </div>
+            <ul class="bg-bubbles">
+                <li></li>
+                <li></li>
+                <li></li>
+                <li></li>
+                <li></li>
+                <li></li>
+                <li></li>
+                <li></li>
+                <li></li>
+                <li></li>
+            </ul>
+        </div>
+    </div>
+  </body>
+</html>
